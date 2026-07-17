@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Interactive Weather &amp; Packing Planner</title>
+  <meta name="description" content="Check current weather, a 3-day forecast, and get a smart packing checklist for any city." />
+
+  <!-- Fonts: Space Grotesk for display, Inter for body/UI -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+  <!-- Animated weather background layer (rain / snow / sun rays), purely decorative -->
+  <div id="weather-bg" class="weather-bg" aria-hidden="true"></div>
+
+  <div class="app-shell">
+
+    <!-- ===================== HEADER ===================== -->
+    <header class="site-header">
+      <div class="header-content">
+        <p class="eyebrow" id="live-clock">—</p>
+        <h1 class="site-title">☁️ Interactive Weather &amp; Packing Planner</h1>
+        <p class="site-subtitle">Search any city to see the sky ahead &mdash; and exactly what to pack for it.</p>
+      </div>
+
+      <button
+        id="dark-mode-toggle"
+        class="icon-toggle"
+        type="button"
+        aria-pressed="false"
+        aria-label="Toggle dark mode"
+        title="Toggle dark mode"
+      >🌙</button>
+    </header>
+
+    <!-- ===================== SEARCH SECTION ===================== -->
+    <section class="search-section" aria-label="Search for a city">
+      <form id="search-form" class="search-form" autocomplete="off" role="search">
+        <div class="search-field">
+          <span class="search-icon" aria-hidden="true">🔍</span>
+          <input
+            type="text"
+            id="city-input"
+            name="city"
+            placeholder="Search a city… e.g. Jaipur, Tokyo, Lisbon"
+            aria-label="City name"
+            required
+          />
+        </div>
+        <button type="submit" id="search-btn" class="btn btn-primary">
+          <span class="btn-label">Search</span>
+          <span class="spinner" id="search-spinner" hidden aria-hidden="true"></span>
+        </button>
+        <button type="button" id="geo-btn" class="btn btn-secondary" aria-label="Use my current location">
+          📍 Use My Location
+        </button>
+      </form>
+
+      <!-- Unit toggle -->
+      <div class="unit-toggle" role="group" aria-label="Temperature unit">
+        <button type="button" class="unit-btn is-active" id="unit-c" data-unit="C" aria-pressed="true">°C</button>
+        <button type="button" class="unit-btn" id="unit-f" data-unit="F" aria-pressed="false">°F</button>
+      </div>
+    </section>
+
+    <!-- Search history -->
+    <section class="history-section" aria-label="Recent searches">
+      <h2 class="section-label">Recent searches</h2>
+      <div id="history-list" class="history-list">
+        <p class="history-empty" id="history-empty">Your last 5 searches will show up here.</p>
+      </div>
+    </section>
+
+    <!-- Inline error message -->
+    <div id="error-banner" class="error-banner" role="alert" hidden>
+      <span class="error-icon" aria-hidden="true">⚠️</span>
+      <span id="error-message"></span>
+    </div>
+
+    <!-- ===================== MAIN DASHBOARD ===================== -->
+    <main id="dashboard" class="dashboard" hidden>
+
+      <!-- Current weather -->
+      <section class="current-weather-card card" aria-labelledby="current-city-name">
+        <div class="sky-strip" aria-hidden="true"></div>
+        <div class="current-weather-top">
+          <div>
+            <h2 id="current-city-name" class="current-city">—</h2>
+            <p id="current-country" class="current-country">—</p>
+            <p id="current-date" class="current-date">—</p>
+          </div>
+          <div class="current-icon-wrap">
+            <span id="current-icon" class="current-icon" aria-hidden="true">🌤️</span>
+          </div>
+        </div>
+
+        <div class="current-temp-row">
+          <p id="current-temp" class="current-temp">--°</p>
+          <div>
+            <p id="current-condition" class="current-condition">—</p>
+            <p id="current-feels-like" class="current-feels-like">Feels like --°</p>
+          </div>
+        </div>
+
+        <ul class="current-stats" id="current-stats">
+          <li class="stat-item">
+            <span class="stat-icon" aria-hidden="true">💧</span>
+            <span class="stat-label">Humidity</span>
+            <span class="stat-value" id="stat-humidity">--%</span>
+          </li>
+          <li class="stat-item">
+            <span class="stat-icon" aria-hidden="true">💨</span>
+            <span class="stat-label">Wind</span>
+            <span class="stat-value" id="stat-wind">-- km/h</span>
+          </li>
+          <li class="stat-item">
+            <span class="stat-icon" aria-hidden="true">🌡️</span>
+            <span class="stat-label">Pressure</span>
+            <span class="stat-value" id="stat-pressure">-- hPa</span>
+          </li>
+          <li class="stat-item">
+            <span class="stat-icon" aria-hidden="true">👁️</span>
+            <span class="stat-label">Visibility</span>
+            <span class="stat-value" id="stat-visibility">-- km</span>
+          </li>
+        </ul>
+      </section>
+
+      <!-- Packing suggestions -->
+      <section class="packing-card card" aria-labelledby="packing-title">
+        <h2 id="packing-title" class="card-title">🎒 What to pack</h2>
+        <ul id="packing-list" class="packing-list">
+          <!-- populated by renderPackingSuggestions() -->
+        </ul>
+      </section>
+
+      <!-- Forecast -->
+      <section class="forecast-section" aria-labelledby="forecast-title">
+        <h2 id="forecast-title" class="card-title">3-Day Forecast</h2>
+        <div id="forecast-row" class="forecast-row">
+          <!-- populated by renderForecast() -->
+        </div>
+      </section>
+
+    </main>
+
+    <!-- Empty state before any search -->
+    <div id="empty-state" class="empty-state">
+      <p class="empty-emoji" aria-hidden="true">🌦️</p>
+      <p>Search a city, use your location, or pick a recent search to see the forecast and packing list.</p>
+    </div>
+
+    <footer class="site-footer">
+      <p>Built with vanilla HTML, CSS &amp; JavaScript · Weather data by OpenWeatherMap</p>
+    </footer>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>
