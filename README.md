@@ -44,26 +44,7 @@ Search a city (or share your location) and get:
 
 No `npm install` required — there are no dependencies.
 
-## How to get an API key
 
-1. Go to [openweathermap.org/users/sign_up](https://home.openweathermap.org/users/sign_up) and create a free account.
-2. Once verified, go to **My API Keys** in your account dashboard.
-3. Copy your default key (new keys can take up to a couple of hours to activate).
-4. Open `script.js` and paste it in:
-
-   ```js
-   const API_KEY = 'your-key-here';
-   ```
-
-## Folder structure
-
-```
-weather-packing-planner/
-├── index.html      # Markup: header, search, dashboard, cards
-├── style.css        # Design tokens, themes, layout, responsiveness
-├── script.js         # Fetching, rendering, rules engine, state
-└── README.md
-```
 
 ## Technologies
 
@@ -72,15 +53,7 @@ weather-packing-planner/
 - Vanilla JavaScript (ES6+: `async/await`, destructuring, arrow functions, array methods)
 - [OpenWeatherMap](https://openweathermap.org/api) Current Weather & 5-day Forecast APIs
 
-## How to run
 
-```bash
-# Option 1 — just open it
-open index.html
-
-# Option 2 — serve it locally (recommended, avoids some browser file:// restrictions)
-npx serve .
-```
 
 ## Future improvements
 
